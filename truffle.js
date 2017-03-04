@@ -1,3 +1,6 @@
+require('babel-core/register');
+require('babel-polyfill');
+
 module.exports = {
   networks: {
     development: {
