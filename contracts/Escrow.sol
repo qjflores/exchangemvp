@@ -36,6 +36,10 @@ contract Escrow is Killable, SafeMath {
 
   event InEscrow(uint block);
 
+  function () payable {
+    pay();
+  }
+
   function pay() payable stateIs(State.Open) {
     if(msg.value != (amount+fee))
       throw;
