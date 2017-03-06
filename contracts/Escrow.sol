@@ -1,9 +1,9 @@
 pragma solidity ^0.4.2;
 
-import "./zeppelin/lifecycle/Killable.sol";
+import "./zeppelin/ownership/Ownable.sol";
 import "./zeppelin/SafeMath.sol";
 
-contract Escrow is Killable, SafeMath {
+contract Escrow is Ownable, SafeMath {
   address private buyer;
   address private seller; //TODO handle multiple sellers
 
@@ -41,7 +41,7 @@ contract Escrow is Killable, SafeMath {
   }
 
   function pay() payable stateIs(State.Open) {
-    if(msg.value != (amount+fee))
+    if(msg.value != safeAdd(amount, fee))
       throw;
     //possible book keeping?
     state = State.InEscrow;
@@ -58,10 +58,7 @@ contract Escrow is Killable, SafeMath {
     selfdestruct(multiSig);
   }
 
-  function refundToSeller() stateIs(State.InEscrow) {
-    if(msg.sender != owner)
-      throw;
-
+  function refundToSeller() stateIs(State.InEscrow) onlyOwner {
     selfdestruct(seller);
   }
 
